@@ -40,52 +40,54 @@ class DetailsProductPage extends StatelessWidget {
 
   _buildMap() {
     return Card(
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-        width: double.infinity,
-        height: 200,
-        child: BlocBuilder<GeolocationCubit, GeolocationState>(
-          builder: (context, state) {
-            if (state is GeolocationDone) {
-              return ClipRRect(
-                borderRadius: BorderRadiusGeometry.circular(20),
-                child: FlutterMap(
-                  options: MapOptions(
-                    initialCenter: LatLng(
-                      state.position?.latitude ?? 0.0,
-                      state.position?.longitude ?? 0.0,
+      child: AspectRatio(
+        aspectRatio: 3 / 1,
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+          width: double.infinity,
+          child: BlocBuilder<GeolocationCubit, GeolocationState>(
+            builder: (context, state) {
+              if (state is GeolocationDone) {
+                return ClipRRect(
+                  borderRadius: BorderRadiusGeometry.circular(20),
+                  child: FlutterMap(
+                    options: MapOptions(
+                      initialCenter: LatLng(
+                        state.position?.latitude ?? 0.0,
+                        state.position?.longitude ?? 0.0,
+                      ),
+                      initialZoom: 15,
                     ),
-                    initialZoom: 15,
+                    children: [
+                      TileLayer(
+                        urlTemplate:
+                            'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                        userAgentPackageName: 'com.practical.test',
+                      ),
+                      MarkerLayer(
+                        markers: [
+                          Marker(
+                            point: LatLng(
+                              state.position?.latitude ?? 0.0,
+                              state.position?.longitude ?? 0.0,
+                            ),
+                            width: 40,
+                            height: 40,
+                            child: Icon(
+                              Icons.stars_rounded,
+                              color: Colors.red,
+                              size: 40,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                  children: [
-                    TileLayer(
-                      urlTemplate:
-                          'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                      userAgentPackageName: 'com.practical.test',
-                    ),
-                    MarkerLayer(
-                      markers: [
-                        Marker(
-                          point: LatLng(
-                            state.position?.latitude ?? 0.0,
-                            state.position?.longitude ?? 0.0,
-                          ),
-                          width: 40,
-                          height: 40,
-                          child: Icon(
-                            Icons.stars_rounded,
-                            color: Colors.red,
-                            size: 40,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              );
-            }
-            return Center(child: CupertinoActivityIndicator());
-          },
+                );
+              }
+              return Center(child: CupertinoActivityIndicator());
+            },
+          ),
         ),
       ),
     );
